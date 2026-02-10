@@ -18,6 +18,7 @@ import {
   User,
   Cpu
 } from 'lucide-react';
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
 // --- Constants ---
 const ACCENT_COLOR = "#E2F044"; // Acid Yellow
@@ -93,9 +94,9 @@ const GenSanChat = () => {
     scrollToBottom();
   }, [messages, isOpen]);
 
-  // Initialize Chat Session
+  // Initialize Chat Session in background
   useEffect(() => {
-    if (isOpen && !chatSessionRef.current) {
+    if (!chatSessionRef.current) {
       const initChat = async () => {
         try {
           // Dynamic import to avoid page load crashes if the module fails to resolve
@@ -129,12 +130,12 @@ const GenSanChat = () => {
           });
         } catch (error) {
           console.error("Failed to initialize AI Chat:", error);
-          setMessages(prev => [...prev, { role: 'model', text: "すまん、今は無線が繋がらねぇみたいだ。（AIの初期化に失敗しました）" }]);
+          // Do not show error in UI yet, wait for interaction
         }
       };
       initChat();
     }
-  }, [isOpen]);
+  }, []); // Run on mount to pre-load
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
@@ -152,11 +153,44 @@ const GenSanChat = () => {
         chatSessionRef.current = ai.chats.create({ model: 'gemini-3-flash-preview' });
       }
 
-      const result = await chatSessionRef.current.sendMessage({ message: text });
-      setMessages(prev => [...prev, { role: 'model', text: result.text }]);
+      // Add a placeholder message for streaming content
+      setMessages(prev => [...prev, { role: 'model', text: "" }]);
+
+      const result = await chatSessionRef.current.sendMessageStream({ message: text });
+      
+      let fullText = "";
+      for await (const chunk of result) {
+        // On first chunk, stop thinking animation
+        setIsThinking(false);
+        
+        const chunkText = chunk.text;
+        if (chunkText) {
+          fullText += chunkText;
+          setMessages(prev => {
+            const newHistory = [...prev];
+            const lastMsg = newHistory[newHistory.length - 1];
+            // Ensure we update the model's placeholder message
+            if (lastMsg.role === 'model') {
+              lastMsg.text = fullText;
+            }
+            return newHistory;
+          });
+        }
+      }
+
     } catch (error) {
       console.error("Gemini API Error:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "すまん、無線が混線してるみたいだ。（エラーが発生しました。もう一度試してください）" }]);
+      setMessages(prev => {
+        // If an error occurred, replace the placeholder or add error message
+        const newHistory = [...prev];
+        const lastMsg = newHistory[newHistory.length - 1];
+         if (lastMsg.role === 'model' && lastMsg.text === "") {
+            lastMsg.text = "すまん、無線が混線してるみたいだ。（エラーが発生しました。もう一度試してください）";
+         } else {
+             newHistory.push({ role: 'model', text: "すまん、無線が混線してるみたいだ。（エラーが発生しました。もう一度試してください）" });
+         }
+         return newHistory;
+      });
     } finally {
       setIsThinking(false);
     }
@@ -367,14 +401,32 @@ const Sticker = ({ children, rotate = 0, className = "", style = {} }: { childre
 );
 
 /**
- * Photo Frame (Brutalist)
+ * Photo Frame (Brutalist) with Lazy Loading support
  */
-const PhotoFrame = ({ src, alt, caption, className = "" }: { src: string, alt: string, caption?: string, className?: string }) => (
+const PhotoFrame = ({ 
+  src, 
+  alt, 
+  caption, 
+  className = "",
+  loading = "lazy" // Default to lazy for better performance
+}: { 
+  src: string, 
+  alt: string, 
+  caption?: string, 
+  className?: string,
+  loading?: "lazy" | "eager"
+}) => (
   <div className={`relative group h-full ${className}`}>
     <div className="absolute inset-0 bg-black translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300"></div>
     <div className="relative border-2 border-black bg-white p-1 h-full flex flex-col">
       <div className="overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 flex-1">
-        <img src={src} alt={alt} className="w-full h-full object-cover aspect-[3/4]" />
+        <img 
+          src={src} 
+          alt={alt} 
+          className="w-full h-full object-cover aspect-[3/4]" 
+          loading={loading}
+          decoding="async"
+        />
       </div>
       {caption && (
         <div className="border-t-2 border-black p-2 bg-[#E2F044] flex justify-between items-center shrink-0">
@@ -569,6 +621,7 @@ export default function App() {
                       alt="Construction Worker"
                       caption={HERO_IMAGES[currentHeroIndex].caption}
                       className="rotate-2 md:rotate-3 h-full"
+                      loading="eager" // Load hero image immediately
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -628,6 +681,8 @@ export default function App() {
                  src="https://github.com/ryoto2323/ashiba-ya/blob/main/public/asd.png?raw=true" 
                  className="w-full grayscale contrast-125 border-2 border-black rotate-2 shadow-[8px_8px_0px_0px_#E2F044]"
                  alt="Scaffolding structure"
+                 loading="lazy"
+                 decoding="async"
                />
             </div>
           </div>
@@ -838,6 +893,7 @@ export default function App() {
                       src={profile.image}
                       alt="Staff" 
                       className="-rotate-2 max-w-sm mx-auto"
+                      loading="lazy"
                     />
                     <Sticker 
                       className="absolute -bottom-6 -right-6 rotate-6 border-black"

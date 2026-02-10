@@ -25,15 +25,15 @@ const BLACK = "#111";
 
 const HERO_IMAGES = [
   {
-    src: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop",
+    src: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/asa.png?raw=true",
     caption: "現場記録 #01"
   },
   {
-    src: "https://images.unsplash.com/photo-1590649880765-91b1956b8276?q=80&w=2070&auto=format&fit=crop",
+    src: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/asb.png?raw=true",
     caption: "現場記録 #02"
   },
   {
-    src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070&auto=format&fit=crop",
+    src: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/asc.png?raw=true",
     caption: "現場記録 #03"
   }
 ];
@@ -42,7 +42,7 @@ const HERO_IMAGES = [
 const STAFF_PROFILES = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop",
+    image: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/ase.png?raw=true",
     catch: "「最初は筋肉痛で泣きそうでした（笑）」",
     body: "正直、最初はキツかったです。でも、先輩が「無理すんなよ」ってこまめに休憩させてくれたので続きました。\n何より、給料袋を見た時の感動がすごい（笑）。\n今は身体も動くようになってきて、高いところからの景色を楽しめる余裕も出てきました。\n迷ってるなら、とりあえず見学に来てみるといいと思いますよ！",
     profile: "入社1年目 / 元コンビニ店員",
@@ -52,7 +52,7 @@ const STAFF_PROFILES = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2070&auto=format&fit=crop",
+    image: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/asf.png?raw=true",
     catch: "「ゲーム感覚で資格を取ったら、給料が爆上がりした。」",
     body: "昔は「なんとなく」で生きてたけど、ここは「何ができれば給料が上がるか」が明確。\nRPGのクエストみたいに資格を取ったり、図面を覚えたりしてたら、いつの間にか職長になってました。\n同窓会で給料の話になった時、周りの友達より貰ってて密かにガッツポーズしましたね。",
     profile: "入社3年目 / 職長（元フリーター）",
@@ -62,7 +62,7 @@ const STAFF_PROFILES = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1653669487003-7d89b2020f3c?q=80&w=2070&auto=format&fit=crop",
+    image: "https://github.com/ryoto2323/ashiba-ya/blob/main/public/asg.png?raw=true",
     catch: "「怖い人がいないか、めちゃくちゃ不安でした。」",
     body: "建設業って怒鳴られるイメージがあったんですけど、ここは本当にサバサバしてます。\n仕事中は真剣だけど、休憩中はみんなでスマホゲームしたり、TikTok撮ったり（笑）。\n髪色もネイルも自由なので、休みの日は思いっきりオシャレできるのも気に入ってます。",
     profile: "入社2年目 / 女性スタッフ",
@@ -625,7 +625,7 @@ export default function App() {
             <div className="md:col-span-5 relative pt-10 md:pt-0">
                <div className="absolute top-0 right-0 -z-10 w-full h-full border-2 border-dashed border-gray-300"></div>
                <img 
-                 src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=2070&auto=format&fit=crop" 
+                 src="https://github.com/ryoto2323/ashiba-ya/blob/main/public/asd.png?raw=true" 
                  className="w-full grayscale contrast-125 border-2 border-black rotate-2 shadow-[8px_8px_0px_0px_#E2F044]"
                  alt="Scaffolding structure"
                />
